@@ -13,7 +13,7 @@ public class CourseRepository {
     private static List<Course> courses = new ArrayList<>();
 
     static {
-        courses.add(new Course(1, "IELTS-6.5", "IELTS 6.5", "Intermediate", 5000000.0, "2026-05-01", "Lộ trình IELTS 6.5", "Mr. A", "3 months", 10, false, "ACTIVE"));
+        courses.add(new Course(1, "IELTS-6.5", "IELTS 6.5", "Intermediate", 5000000.0, "2026-05-01", "Lộ trình IELTS 6.5", "Mr. A", "3 months", 10, false, "ACTIVE"));      
         courses.add(new Course(2, "IELTS-7.0", "IELTS 7.0", "Advanced", 7000000.0, "2026-06-01", "Lộ trình IELTS 7.0", "Ms. B", "4 months", 0, false, "ACTIVE"));
         courses.add(new Course(3, "BASIC-ENG", "Basic English", "Beginner", 3000000.0, "2026-04-20", "Tiếng Anh cơ bản", "Mr. C", "2 months", 5, false, "ACTIVE"));
         courses.add(new Course(4, "COMM-ENG", "Communication", "Intermediate", 4000000.0, "2026-05-15", "Giao tiếp", "Ms. D", "2.5 months", 0, false, "ACTIVE"));
