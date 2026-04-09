@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sửa khóa học</title>
+</head>
+<body>
+
+<h2>Chỉnh sửa khóa học</h2>
+
+<form th:action="@{/course/edit/{id}(id=${course.id})}"
+      th:object="${course}"
+      method="post">
+
+    <div>
+        <label>Tên khóa:</label>
+        <input type="text" th:field="*{name}" readonly />
+    </div>
+
+    <div>
+        <label>Học phí:</label>
+        <input type="number" th:field="*{tuitionFee}" />
+    </div>
+
+    <div>
+        <label>Ngày khai giảng:</label>
+        <input type="date" th:field="*{startDate}" />
+    </div>
+
+    <button type="submit">Lưu</button>
+</form>
+
+</body>
+</html>
