@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết khóa học</title>
+</head>
+<body>
+
+<h1>Chi tiết khóa học</h1>
+
+<!-- Nếu không có dữ liệu -->
+<p th:if="${course == null}" th:text="${message}" style="color:red;"></p>
+
+<!-- Nếu có dữ liệu -->
+<div th:if="${course != null}">
+
+    <h2 th:text="${course.name}"></h2>
+
+    <p>
+        <strong>Mã khóa:</strong>
+        <span th:text="${course.courseCode}"></span>
+    </p>
+
+    <p>
+        <strong>Giảng viên:</strong>
+        <span th:text="${course.teacher}"></span>
+    </p>
+
+    <p>
+        <strong>Thời lượng:</strong>
+        <span th:text="${course.duration}"></span>
+    </p>
+
+    <p>
+        <strong>Mô tả:</strong>
+        <span th:text="${course.description}"></span>
+    </p>
+
+    <!-- HẾT CHỖ -->
+    <p th:if="${course.isFull}" style="color:red; font-weight:bold;">
+        HẾT CHỖ
+    </p>
+
+</div>
+</body>
+</html>
