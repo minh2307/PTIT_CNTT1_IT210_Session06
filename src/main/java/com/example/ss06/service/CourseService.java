@@ -1,3 +1,7 @@
+package com.example.ss06.service;
+
+import com.example.ss06.model.Course;
+import com.example.ss06.repository.CourseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +17,8 @@ public class CourseService {
         return repository.findAll();
     }
 
-    public Course getByCode(String code) {
-        return repository.findByCode(code);
+    public Course getByCourseCode(String courseCode) {
+        return repository.findByCourseCode(courseCode);
     }
 
     public List<Course> filterCourses(String level, Double maxFee) {
@@ -26,7 +30,7 @@ public class CourseService {
         }
         if (maxFee != null && maxFee > 0) {
             result = result.stream()
-                    .filter(c -> c.getFee() <= maxFee)
+                    .filter(c -> c.getTuitionFee() <= maxFee)
                     .toList();
         }
         return result;
@@ -36,7 +40,7 @@ public class CourseService {
         repository.update(course);
     }
 
-    public String deleteCourse(Long id) {
+    public String deleteCourse(Integer id) {
         Course course = repository.findById(id);
         if (course == null) {
             return "Khóa học không tồn tại";
