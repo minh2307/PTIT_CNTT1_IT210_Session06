@@ -1,13 +1,32 @@
 package com.example.ss06.controller;
 
+import com.example.ss06.model.Course;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.ui.Model;
+import java.util.List;
 
 public class CourseController {
     @Autowired
     private CourseService courseService;
+    @GetMapping("/course/list")
+    public String listCourses(
+            @RequestParam(defaultValue = "ALL") String level,
+            @RequestParam(defaultValue = "999999999") double maxFee,
+            Model model) {
+
+        List<Course> courses = courseService.filterCourses(level, maxFee);
+
+        model.addAttribute("courses", courses);
+        model.addAttribute("selectedLevel", level);
+        model.addAttribute("maxFee", maxFee);
+
+        return "course/list";
+    }
 
     // 🔹 Người 5 làm đoạn này
     @GetMapping("/course/detail/{courseCode}")
