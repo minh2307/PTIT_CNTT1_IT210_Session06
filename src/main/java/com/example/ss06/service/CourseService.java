@@ -1,36 +1,54 @@
 package com.example.ss06.service;
 
 import com.example.ss06.model.Course;
+import com.example.ss06.repository.CourseRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class CourseService {
 
-    private static List<Course> courses = new ArrayList<>();
+    @Autowired
+    private CourseRepository repository;
 
-    static {
-        courses.add(new Course("C01", "IELTS 5.0", 5000000, "2026-05-01"));
-        courses.add(new Course("C02", "IELTS 6.5", 7000000, "2026-06-01"));
-        courses.add(new Course("C03", "TOEIC 600", 4000000, "2026-04-20"));
+    public List<Course> getAllCourses() {
+        return repository.findAll();
     }
 
-    public Course findById(String id) {
-        for (Course c : courses) {
-            if (c.getId().equals(id)) {
-                return c;
-            }
+    public Course getByCourseCode(String courseCode) {
+        return repository.findByCourseCode(courseCode);
+    }
+
+    public List<Course> filterCourses(String level, Double maxFee) {
+        List<Course> result = repository.findAll();
+        if (level != null && !level.isEmpty()) {
+            result = result.stream()
+                    .filter(c -> c.getLevel().equalsIgnoreCase(level))
+                    .toList();
         }
-        return null;
+        if (maxFee != null && maxFee > 0) {
+            result = result.stream()
+                    .filter(c -> c.getTuitionFee() <= maxFee)
+                    .toList();
+        }
+        return result;
     }
 
-    public void update(Course course) {
-        // Không cần làm gì vì đã update trực tiếp object
+    public void updateCourse(Course course) {
+        repository.update(course);
     }
 
-    public List<Course> findAll() {
-        return courses;
+    public String deleteCourse(Integer id) {
+        Course course = repository.findById(id);
+        if (course == null) {
+            return "Khóa học không tồn tại";
+        }
+        if (course.getStudentCount() > 0) {
+            return "Không thể hủy khóa học đã có học viên đăng ký";
+        }
+        repository.delete(id);
+        return "Xóa thành công";
     }
 }
