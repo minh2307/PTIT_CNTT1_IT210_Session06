@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/main-layout}">
+<head>
+    <title>Chi tiết khóa học</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <h2 class="section-title">Chi tiết khóa học</h2>
+    <p class="section-subtitle">Thông tin tổng quan, giảng viên và tình trạng tuyển sinh.</p>
+
+    <div class="empty-state" th:if="${course == null}">
+        <span th:text="${message != null ? message : 'Không tìm thấy khóa học.'}">Không tìm thấy khóa học.</span>
+    </div>
+
+    <article class="detail-panel" th:if="${course != null}">
+        <div>
+            <span class="badge" th:classappend="${course.full} ? ' badge-danger' : ' badge-success'"
+                  th:text="${course.full} ? 'Hết chỗ' : 'Còn chỗ'">Còn chỗ</span>
+        </div>
+        <h3 th:text="${course.name}">IELTS 6.5</h3>
+        <div class="meta-row">
+            <span th:text="'Mã khóa: ' + ${course.courseCode}">Mã khóa</span>
+            <span th:text="'Trình độ: ' + ${course.level}">Trình độ</span>
+            <span th:text="'Giảng viên: ' + ${course.teacher}">Giảng viên</span>
+            <span th:text="'Thời lượng: ' + ${course.duration}">Thời lượng</span>
+            <span th:text="'Khai giảng: ' + ${course.startDate}">Khai giảng</span>
+            <span th:text="'Học viên: ' + ${course.studentCount}">Học viên</span>
+            <span th:text="'Học phí: ' + ${course.tuitionFee} + ' VND'">Học phí</span>
+        </div>
+        <div class="description-box" th:text="${course.description}">
+            Mô tả khóa học.
+        </div>
+        <div class="form-actions">
+            <a class="btn btn-secondary" th:href="@{/course/list}">Quay lại danh sách</a>
+            <a class="btn btn-primary" th:href="@{/course/edit/{courseCode}(courseCode=${course.courseCode})}">Chỉnh sửa khóa học</a>
+        </div>
+    </article>
+</section>
+</body>
+</html>
