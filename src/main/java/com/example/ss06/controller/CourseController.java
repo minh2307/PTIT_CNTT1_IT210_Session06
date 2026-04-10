@@ -7,6 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.util.List;
 
 @Controller
@@ -19,8 +21,8 @@ public class CourseController {
     // ===== LIST =====
     @GetMapping("/list")
     public String listCourses(
-            @RequestParam(defaultValue = "ALL") String level,
-            @RequestParam(defaultValue = "999999999") double maxFee,
+            @RequestParam(name = "level", defaultValue = "ALL") String level,
+            @RequestParam(name = "maxFee", required = false) Double maxFee,
             Model model) {
 
         List<Course> courses = courseService.filterCourses(level, maxFee);
@@ -34,7 +36,7 @@ public class CourseController {
 
     // ===== DETAIL =====
     @GetMapping("/detail/{courseCode}")
-    public String getCourseDetail(@PathVariable String courseCode, Model model) {
+    public String getCourseDetail(@PathVariable("courseCode") String courseCode, Model model) {
 
         Course course = courseService.findByCourseCode(courseCode);
 
@@ -49,7 +51,7 @@ public class CourseController {
 
     // ===== EDIT (GET) =====
     @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable String id, Model model) {
+    public String showEditForm(@PathVariable("id") Integer id, Model model) {
 
         Course course = courseService.findById(id);
 
@@ -63,7 +65,7 @@ public class CourseController {
 
     // ===== EDIT (POST) =====
     @PostMapping("/edit/{id}")
-    public String updateCourse(@PathVariable String id,
+    public String updateCourse(@PathVariable("id") Integer id,
                                @ModelAttribute("course") Course course) {
 
         Course existingCourse = courseService.findById(id);
@@ -71,11 +73,23 @@ public class CourseController {
         if (existingCourse != null) {
             existingCourse.setTuitionFee(course.getTuitionFee());
             existingCourse.setStartDate(course.getStartDate());
+            existingCourse.setStudentCount(course.getStudentCount());
 
             courseService.update(existingCourse);
         }
 
-        // PRG Pattern
-        return "redirect:/course/list";
+        return "/course/list";
+    }
+
+    // ===== DELETE (POST) =====
+    @PostMapping("/delete/{id}")
+    public String deleteCourse(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
+        String result = courseService.deleteCourse(id);
+        if (!"Xóa thành công".equals(result)) {
+            redirectAttributes.addFlashAttribute("error", result);
+        } else {
+            redirectAttributes.addFlashAttribute("success", result);
+        }
+        return "/course/list";
     }
 }

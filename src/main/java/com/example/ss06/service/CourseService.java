@@ -17,13 +17,17 @@ public class CourseService {
         return repository.findAll();
     }
 
-    public Course getByCourseCode(String courseCode) {
+    public Course findByCourseCode(String courseCode) {
         return repository.findByCourseCode(courseCode);
+    }
+
+    public Course findById(Integer id) {
+        return repository.findById(id);
     }
 
     public List<Course> filterCourses(String level, Double maxFee) {
         List<Course> result = repository.findAll();
-        if (level != null && !level.isEmpty()) {
+        if (level != null && !level.isEmpty() && !level.equalsIgnoreCase("ALL")) {
             result = result.stream()
                     .filter(c -> c.getLevel().equalsIgnoreCase(level))
                     .toList();
@@ -36,7 +40,7 @@ public class CourseService {
         return result;
     }
 
-    public void updateCourse(Course course) {
+    public void update(Course course) {
         repository.update(course);
     }
 

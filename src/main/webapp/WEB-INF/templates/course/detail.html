@@ -26,14 +26,14 @@
             <span th:text="'Thời lượng: ' + ${course.duration}">Thời lượng</span>
             <span th:text="'Khai giảng: ' + ${course.startDate}">Khai giảng</span>
             <span th:text="'Học viên: ' + ${course.studentCount}">Học viên</span>
-            <span th:text="'Học phí: ' + ${course.tuitionFee} + ' VND'">Học phí</span>
+            <span th:text="'Học phí: ' + ${#numbers.formatDecimal(course.tuitionFee, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">Học phí</span>
         </div>
         <div class="description-box" th:text="${course.description}">
             Mô tả khóa học.
         </div>
         <div class="form-actions">
             <a class="btn btn-secondary" th:href="@{/course/list}">Quay lại danh sách</a>
-            <a class="btn btn-primary" th:href="@{/course/edit/{courseCode}(courseCode=${course.courseCode})}">Chỉnh sửa khóa học</a>
+            <a class="btn btn-primary" th:href="@{/course/edit/{id}(id=${course.id})}">Chỉnh sửa khóa học</a>
         </div>
     </article>
 </section>

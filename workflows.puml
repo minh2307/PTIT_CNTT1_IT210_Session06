@@ -1,0 +1,104 @@
+@startuml "Flow 1: Hien thi danh sach va Loc khoa hoc"
+participant "Học viên (Browser)" as User
+participant "CourseController" as Ctrl
+participant "CourseService" as Svc
+participant "CourseRepository" as Repo
+participant "list.html (Thymeleaf)" as View
+
+User -> Ctrl : GET /course/list?level=Intermediate&maxFee=5000000
+Ctrl -> Svc : filterCourses("Intermediate", 5000000.0)
+Svc -> Repo : findAll()
+Repo --> Svc : List<Course>
+Svc -> Svc : Lọc theo Level và maxFee
+Svc --> Ctrl : List<Course> (Filtered)
+Ctrl -> View : model.addAttribute("courses", list)
+View --> User : Hiển thị danh sách khóa học
+@enduml
+
+@startuml "Flow 2: Xem chi tiet khoa hoc"
+participant "Học viên (Browser)" as User
+participant "CourseController" as Ctrl
+participant "CourseService" as Svc
+participant "CourseRepository" as Repo
+participant "detail.html (Thymeleaf)" as View
+
+User -> Ctrl : GET /course/detail/IELTS-6.5
+Ctrl -> Svc : getByCourseCode("IELTS-6.5")
+Svc -> Repo : findByCourseCode("IELTS-6.5")
+Repo --> Svc : Course
+Svc --> Ctrl : Course
+alt Khóa học tồn tại
+    Ctrl -> View : model.addAttribute("course", course)
+else Khóa học không tồn tại
+    Ctrl -> View : model.addAttribute("message", "Không tìm thấy khóa học!")
+end
+View --> User : Hiển thị chi tiết (Có nhãn HẾT CHỖ nếu isFull)
+@enduml
+
+@startuml "Flow 3: Cap nhat thong tin khoa hoc"
+participant "Admin (Browser)" as Admin
+participant "CourseController" as Ctrl
+participant "CourseService" as Svc
+participant "CourseRepository" as Repo
+participant "edit.html (Thymeleaf)" as View
+
+== GET Form ==
+Admin -> Ctrl : GET /course/edit/1
+Ctrl -> Svc : findById(1)
+Svc -> Repo : findById(1)
+Repo --> Svc : Course
+Svc --> Ctrl : Course
+Ctrl -> View : model.addAttribute("course", course)
+View --> Admin : Hiển thị form cập nhật (Edit)
+
+== POST Data ==
+Admin -> Ctrl : POST /course/edit/1 (FormData)
+Ctrl -> Svc : findById(1)
+Svc --> Ctrl : existingCourse
+Ctrl -> Ctrl : Cập nhật tuitionFee, startDate
+Ctrl -> Svc : updateCourse(existingCourse)
+Svc -> Repo : update(existingCourse)
+Repo --> Svc : OK
+Svc --> Ctrl : OK
+Ctrl -> Admin : Redirect (PRG) về /course/list
+@enduml
+
+@startuml "Flow 4: Xoa khoa hoc"
+participant "Admin (Browser)" as Admin
+participant "CourseController" as Ctrl
+participant "CourseService" as Svc
+participant "CourseRepository" as Repo
+participant "list.html (Thymeleaf)" as View
+
+Admin -> Ctrl : POST /course/delete/1
+Ctrl -> Svc : deleteCourse(1)
+Svc -> Repo : findById(1)
+Repo --> Svc : Course
+
+alt studentCount > 0
+    Svc --> Ctrl : "Không thể hủy khóa học đã có học viên đăng ký"
+    Ctrl -> Ctrl : addFlashAttribute("error", msg)
+else studentCount == 0
+    Svc -> Repo : delete(1)
+    Repo --> Svc : OK
+    Svc --> Ctrl : "Xóa thành công"
+    Ctrl -> Ctrl : addFlashAttribute("success", msg)
+end
+
+Ctrl -> Admin : Redirect (PRG) về /course/list
+@enduml
+
+@startuml "Flow 5: Render Layout voi Thymeleaf"
+participant "Spring MVC" as Spring
+participant "Thymeleaf Engine" as Engine
+participant "main-layout.html" as Layout
+participant "view.html (VD: list.html)" as Page
+
+Spring -> Engine : Yêu cầu render "course/list"
+Engine -> Page : Phân tích list.html (layout:decorate)
+Page --> Engine : Cần nạp "layout/main-layout"
+Engine -> Layout : Nạp khung giao diện chính (Header, Navbar)
+Layout --> Engine : DOM khung HTML
+Engine -> Engine : Gắn block 'layout:fragment="content"' từ Page vào Layout
+Engine -> Spring : Trả về HTML hoàn chỉnh
+@enduml

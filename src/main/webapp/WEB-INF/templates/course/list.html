@@ -8,6 +8,33 @@
 <section layout:fragment="content">
     <h2 class="section-title">Danh sách khóa học</h2>
     <p class="section-subtitle">Theo dõi các chương trình đào tạo đang mở và điều hướng nhanh tới chi tiết từng khóa.</p>
+    <div th:if="${error}" class="empty-state" style="color: var(--danger); border-color: var(--danger); margin-bottom: 20px; padding: 16px;">
+        <span th:text="${error}"></span>
+    </div>
+    <div th:if="${success}" class="empty-state" style="color: var(--success); border-color: var(--success); margin-bottom: 20px; padding: 16px;">
+        <span th:text="${success}"></span>
+    </div>
+
+    <div class="form-panel" style="margin-bottom: 20px;">
+        <form method="get" th:action="@{/course/list}" style="display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap;">
+            <div class="form-group" style="flex: 1; min-width: 200px;">
+                <label for="level">Trình độ</label>
+                <select name="level" id="level">
+                    <option value="ALL" th:selected="${selectedLevel == 'ALL'}">Tất cả</option>
+                    <option value="Beginner" th:selected="${selectedLevel == 'Beginner'}">Beginner</option>
+                    <option value="Intermediate" th:selected="${selectedLevel == 'Intermediate'}">Intermediate</option>
+                    <option value="Advanced" th:selected="${selectedLevel == 'Advanced'}">Advanced</option>
+                </select>
+            </div>
+            <div class="form-group" style="flex: 1; min-width: 200px;">
+                <label for="maxFee">Học phí tối đa</label>
+                <input type="number" name="maxFee" id="maxFee" th:value="${maxFee}">
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary" style="height: 44px; margin-bottom: 2px;">Tìm kiếm</button>
+            </div>
+        </form>
+    </div>
 
     <div class="grid grid-2" th:if="${courses != null and !#lists.isEmpty(courses)}">
         <article class="course-card" th:each="course : ${courses}">
@@ -19,18 +46,21 @@
             <div class="meta-row">
                 <span th:text="'Mã: ' + ${course.courseCode}">Mã: IELTS-6.5</span>
                 <span th:text="'Trình độ: ' + ${course.level}">Trình độ</span>
-                <span th:text="'Học phí: ' + ${course.tuitionFee} + ' VND'">Học phí</span>
+                <span th:text="'Học phí: ' + ${#numbers.formatDecimal(course.tuitionFee, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">Học phí</span>
             </div>
             <p th:text="${course.description}">Mô tả khóa học.</p>
             <div class="form-actions">
                 <a class="btn btn-primary" th:href="@{/course/detail/{courseCode}(courseCode=${course.courseCode})}">Xem chi tiết</a>
-                <a class="btn btn-secondary" th:href="@{/course/edit/{courseCode}(courseCode=${course.courseCode})}">Chỉnh sửa</a>
+                <a class="btn btn-secondary" th:href="@{/course/edit/{id}(id=${course.id})}">Chỉnh sửa</a>
+                <form method="post" th:action="@{/course/delete/{id}(id=${course.id})}" style="display: inline-block; margin: 0;">
+                    <button type="submit" class="btn btn-secondary" style="color: var(--danger); border-color: var(--danger);">Hủy khóa học</button>
+                </form>
             </div>
         </article>
     </div>
 
     <div class="empty-state" th:if="${courses == null or #lists.isEmpty(courses)}">
-        Chưa có khóa học nào để hiển thị.
+        Hiện chưa có lớp học phù hợp với trình độ này
     </div>
 </section>
 </body>
